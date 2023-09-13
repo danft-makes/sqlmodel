@@ -1,4 +1,4 @@
-from llama_index import SQLDatabase, VectorStoreIndex, LLMPredictor, ServiceContext
+from llama_index import SQLDatabase, VectorStoreIndex, LLMPredictor, ServiceContext, set_global_service_context
 from llama_index.indices.struct_store.sql_query import SQLTableRetrieverQueryEngine
 from llama_index.objects import SQLTableNodeMapping, ObjectIndex, SQLTableSchema
 from sqlalchemy import create_engine
@@ -13,7 +13,7 @@ sql_database = SQLDatabase(engine)
 # Load llama.cpp
 callback_manager = CallbackManager([StreamingStdOutCallbackHandler()])
 llama = LlamaCpp(
-    model_path="/home/magus/projects/text-generation-webui/models/TheBloke_WizardCoder-Python-34B-V1.0-GGUF-sus/wizardcoder-python-34b-v1.0.Q4_K_M.gguf",
+    model_path="models/wizard.gguf",
     callback_manager=callback_manager,
     verbose=False,
     max_tokens=500,
@@ -21,9 +21,10 @@ llama = LlamaCpp(
     n_batch=256,
     temperature=0,
 )
-print(f"Loading model... {llama}")
-#llm_predictor = LLMPredictor(llm=llama)
+print(f"Loaded model: {llama}. Updating service_context...")
 service_context = ServiceContext.from_defaults(llm=llama)
+set_global_service_context(service_context)
+print(f"Done")
 
 # Make index
 table_node_mapping = SQLTableNodeMapping(sql_database)
