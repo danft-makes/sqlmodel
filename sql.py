@@ -32,6 +32,7 @@ table_schema_objs = []
 all_table_names = ["branch","customer","inventory","product","sales"]
 for table_name in all_table_names:
     table_schema_objs.append(SQLTableSchema(table_name=table_name))
+    print(f"Appending table {table_name} ")
 obj_index = ObjectIndex.from_objects(
     table_schema_objs,
     table_node_mapping,

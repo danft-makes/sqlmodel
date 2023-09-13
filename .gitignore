@@ -1,3 +1,4 @@
 .aider*
+.python-*
 # Ignore model directory
 models/
