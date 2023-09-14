@@ -6,8 +6,7 @@ from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
 from langchain.agents import create_sql_agent, AgentExecutor
 from langchain.agents.agent_toolkits import SQLDatabaseToolkit
 from langchain.agents.agent_types import AgentType
-
-"""Below is an instruction that describes a task. Write a response that appropriately completes the request.
+SQL_PREFIX="""Below is an instruction that describes a task. Write a response that appropriately completes the request.
 
 ### Instruction:
 You are an agent designed to interact with a SQL database.
@@ -22,7 +21,8 @@ DO NOT make any DML statements (INSERT, UPDATE, DELETE, DROP etc.) to the databa
 If the question does not seem related to the database, just return "I don't know" as the answer.
 Question: {input}
 Table: {table}
-### Response: I should look at the tables in the database to see what I can query. Then I should query the schema of the most relevant tables.
+"""
+SQL_SUFFIX="""### Response: I should look at the tables in the database to see what I can query. Then I should query the schema of the most relevant tables.
 {agent_scratchpad}
 """
 
