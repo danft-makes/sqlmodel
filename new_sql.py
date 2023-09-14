@@ -1,3 +1,5 @@
+# This file is a refactored version of sql.py where the code has been encapsulated into a class named SQLAgent.
+
 from langchain.llms import LlamaCpp
 from langchain.utilities import SQLDatabase
 from langchain_experimental.sql import SQLDatabaseChain
@@ -5,6 +7,7 @@ from langchain.callbacks.manager import CallbackManager
 from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
 from langchain.prompts.prompt import PromptTemplate
 
+# The SQLAgent class encapsulates the initialization and usage of the llm, callback, database, prompt, and agent.
 class SQLAgent:
     _DEFAULT_TEMPLATE = """You are an agent designed to interact with a SQL database.
     Given an input question, create a syntactically correct {dialect} query to run, then return only the query without snippets.
@@ -44,11 +47,13 @@ class SQLAgent:
 
         self.db_chain = SQLDatabaseChain.from_llm(self.llm, self.db, verbose=True, use_query_checker=True, return_intermediate_steps=False, return_direct=True, agent_type=AgentType.OPENAI_FUNCTIONS)
 
+    # The run_query method takes a query as input and returns the result of the query.
     def run_query(self, query):
         response = self.db_chain.run(query)  # Run the query using the database chain
         return response
 
 if __name__=='__main__':
+    # The main script creates an instance of SQLAgent and uses it to run queries in a loop.
     agent = SQLAgent()
     while True:
         QUERY = input("Coloque QUERY: ")  # Get the query from the user
