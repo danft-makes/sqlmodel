@@ -42,9 +42,7 @@ Never query for all the columns from a specific table, only ask for the relevant
 You MUST double check your query before executing it. If you get an error while executing a query, rewrite the query and try again.
 DO NOT make any DML statements (INSERT, UPDATE, DELETE, DROP etc.) to the database.
 If the question does not seem related to the database, just return "I don't know" as the answer.
-
 Question: {input}
-
 Table: {table_info}
 
 ### Response: 
