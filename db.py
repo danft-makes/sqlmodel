@@ -2,7 +2,7 @@ import sqlite3
 from faker import Faker
 
 # Create a new SQLite database
-def create_db():
+def create_db() -> None:
     conn = sqlite3.connect('dmp.db')
     c = conn.cursor()
 
@@ -31,7 +31,7 @@ def create_db():
     conn.close()
 
 # Populate the database with dummy data
-def populate_db():
+def populate_db() -> None:
     conn = sqlite3.connect('dmp.db')
     c = conn.cursor()
     fake = Faker()

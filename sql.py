@@ -26,8 +26,8 @@ Thought: I should look at the tables in the database to see what I can query.
 {table_info}"""
 
 # Load db and Llama
-db = SQLDatabase.from_uri("sqlite:///dmp.db")
-callback_manager = CallbackManager([StreamingStdOutCallbackHandler()])
+db = SQLDatabase.from_uri("sqlite:///dmp.db")  # Load the SQLite database
+callback_manager = CallbackManager([StreamingStdOutCallbackHandler()])  # Initialize the callback manager
 llm = LlamaCpp(
     model_path="models/wizard.gguf",
     #callback_manager=callback_manager,
@@ -36,7 +36,7 @@ llm = LlamaCpp(
     n_ctx=4000,
     n_batch=256,
     temperature=0,
-)
+)  # Initialize the LlamaCpp model
 
 PROMPT = PromptTemplate(
     input_variables=["input", "table_info", "dialect"], template=_DEFAULT_TEMPLATE
@@ -46,6 +46,6 @@ db_chain = SQLDatabaseChain.from_llm(llm, db, verbose=True, use_query_checker=Tr
 
 if __name__=='__main__':
     while True:
-        QUERY = input("Coloque QUERY: ")
-        response = db_chain.run(QUERY)
-        print(response)
+        QUERY = input("Coloque QUERY: ")  # Get the query from the user
+        response = db_chain.run(QUERY)  # Run the query using the database chain
+        print(response)  # Print the response
