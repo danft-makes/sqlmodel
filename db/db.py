@@ -4,7 +4,7 @@ from faker import Faker
 
 # Create a new SQLite database
 def create_query_db() -> None:
-    conn = sqlite3.connect('query.db')
+    conn = sqlite3.connect('queries.db')
     c = conn.cursor()
 
     # Creating the table
@@ -13,7 +13,7 @@ def create_query_db() -> None:
 
 
     # Populate the analysis table
-    populate_analysis_table(c)
+    populate_queries_db(c)
 
     conn.commit()
     conn.close()
@@ -50,7 +50,7 @@ def create_analysis_db() -> None:
     conn.commit()
     conn.close()
 
-def populate_analysis_table(cursor):
+def populate_queries_db(cursor):
     with open('queries.json', 'r', encoding='latin-1') as f:
         queries = json.load(f)
         for query in queries:
@@ -62,7 +62,7 @@ def populate_analysis_table(cursor):
 
 # Populate the database with dummy data
 def sync_with_queries_db():
-    conn_query = sqlite3.connect('query.db')
+    conn_query = sqlite3.connect('queries.db')
     c_query = conn_query.cursor()
     c_query.execute('SELECT * FROM trio')
     rows = c_query.fetchall()
