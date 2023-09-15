@@ -29,11 +29,18 @@ chain = LLMChain(llm=llm, prompt=prompt)
 import sqlite3
 
 if __name__=='__main__':
-    conn = sqlite3.connect('db/query.db')
-    c = conn.cursor()
-    c.execute('SELECT query FROM trio')
-    queries = c.fetchall()
-    for query in queries:
-        QUERY = {'input': query[0]}
+    conn_query = sqlite3.connect('db/query.db')
+    c_query = conn_query.cursor()
+    conn_analysis = sqlite3.connect('db/analysis.db')
+    c_analysis = conn_analysis.cursor()
+    c_query.execute('SELECT id, query FROM trio')
+    queries = c_query.fetchall()
+    for id, query in queries:
+        QUERY = {'input': query}
         response = chain.run(QUERY)
-    conn.close()
+        c_query.execute('UPDATE trio SET response = ? WHERE id = ?', (response, id))
+        c_analysis.execute('UPDATE analysis SET response = ? WHERE id = ?', (response, id))
+    conn_query.commit()
+    conn_analysis.commit()
+    conn_query.close()
+    conn_analysis.close()
