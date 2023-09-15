@@ -50,7 +50,7 @@ def create_analysis_db() -> None:
     conn.close()
 
 def populate_analysis_table(cursor):
-    with open('queries.json', 'r') as f:
+    with open('queries.json', 'r', encoding='latin-1') as f:
         queries = json.load(f)
         for query in queries:
             cursor.execute('INSERT INTO analysis (query, response, gold) VALUES (?, ?, ?)',
