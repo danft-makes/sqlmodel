@@ -7,7 +7,7 @@ from langchain.prompts import PromptTemplate
 
 from prompts import _DEFAULT_TEMPLATE
 
-db = SQLDatabase.from_uri("sqlite:///db/analysis_db.db")  # Load the SQLite database
+db = SQLDatabase.from_uri("sqlite:///db/analysis.db")  # Load the SQLite database
 callback_manager = CallbackManager([StreamingStdOutCallbackHandler()])  # Initialize the callback manager
 llm = LlamaCpp(
     model_path="models/wizard.gguf",
@@ -29,7 +29,7 @@ chain = LLMChain(llm=llm, prompt=prompt)
 import sqlite3
 
 if __name__=='__main__':
-    conn_query = sqlite3.connect('db/query.db')
+    conn_query = sqlite3.connect('db/queries.db')
     c_query = conn_query.cursor()
     conn_analysis = sqlite3.connect('db/analysis.db')
     c_analysis = conn_analysis.cursor()
