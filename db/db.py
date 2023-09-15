@@ -70,7 +70,7 @@ def sync_with_queries_db():
     conn_analysis = sqlite3.connect('analysis.db')
     c_analysis = conn_analysis.cursor()
     for row in rows:
-        c_analysis.execute('INSERT INTO analysis (id, query, gold) VALUES (?, ?, ?)', (row[0], row[1], row[2]))
+        c_analysis.execute('INSERT INTO analysis (id, query, response, gold) VALUES (?, ?, ?, ?)', (row[0], row[1], "", row[2]))
 
     conn_query.close()
     conn_analysis.commit()
