@@ -1,4 +1,5 @@
 import sqlite3
+import json
 from faker import Faker
 
 # Create a new SQLite database
@@ -42,8 +43,18 @@ def create_analysis_db() -> None:
     c.execute('''CREATE TABLE IF NOT EXISTS analysis 
                  (id INTEGER PRIMARY KEY, query TEXT NOT NULL, response TEXT NOT NULL, gold TEXT NOT NULL)''')
 
+    # Populate the analysis table
+    populate_analysis_table(c)
+
     conn.commit()
     conn.close()
+
+def populate_analysis_table(cursor):
+    with open('db/queries.json', 'r') as f:
+        queries = json.load(f)
+        for query in queries:
+            cursor.execute('INSERT INTO analysis (query, response, gold) VALUES (?, ?, ?)',
+                           (query['query'], '', query['gold']))
 
 
 
