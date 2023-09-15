@@ -4,18 +4,22 @@ from faker import Faker
 
 # Create a new SQLite database
 def create_query_db() -> None:
-    conn = sqlite3.connect('query.db')
+    conn = sqlite3.connect('./db/query.db')
     c = conn.cursor()
 
     # Creating the table
     c.execute('''CREATE TABLE IF NOT EXISTS trio 
                  (id INTEGER PRIMARY KEY, query TEXT NOT NULL, gold TEXT NOT NULL)''')
 
+
+    # Populate the analysis table
+    populate_analysis_table(c)
+
     conn.commit()
     conn.close()
 
 def create_analysis_db() -> None:
-    conn = sqlite3.connect('analysis.db')
+    conn = sqlite3.connect('./db/analysis.db')
     c = conn.cursor()
 
     # Tables from the create_db function
@@ -43,14 +47,11 @@ def create_analysis_db() -> None:
     c.execute('''CREATE TABLE IF NOT EXISTS analysis 
                  (id INTEGER PRIMARY KEY, query TEXT NOT NULL, response TEXT NOT NULL, gold TEXT NOT NULL)''')
 
-    # Populate the analysis table
-    populate_analysis_table(c)
-
     conn.commit()
     conn.close()
 
 def populate_analysis_table(cursor):
-    with open('queries.json', 'r', encoding='latin-1') as f:
+    with open('./db/queries.json', 'r', encoding='latin-1') as f:
         queries = json.load(f)
         for query in queries:
             cursor.execute('INSERT INTO analysis (query, response, gold) VALUES (?, ?, ?)',
@@ -61,7 +62,7 @@ def populate_analysis_table(cursor):
 
 # Populate the database with dummy data
 def populate_db() -> None:
-    conn = sqlite3.connect('analysis.db')
+    conn = sqlite3.connect('./db/analysis.db')
     c = conn.cursor()
     fake = Faker()
 
