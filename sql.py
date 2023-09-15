@@ -26,8 +26,14 @@ chain = LLMChain(llm=llm, prompt=prompt)
 
 # manual query db
 
+import sqlite3
+
 if __name__=='__main__':
-    while True:
-        QUERY = input("QUERY = ")
-        QUERY = {'input':QUERY}
+    conn = sqlite3.connect('db/query.db')
+    c = conn.cursor()
+    c.execute('SELECT query FROM trio')
+    queries = c.fetchall()
+    for query in queries:
+        QUERY = {'input': query[0]}
         response = chain.run(QUERY)
+    conn.close()
