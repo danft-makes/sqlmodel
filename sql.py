@@ -38,7 +38,6 @@ if __name__=='__main__':
     for id, query in queries:
         QUERY = {'input': query}
         response = chain.run(QUERY)
-        c_query.execute('UPDATE trio SET response = ? WHERE id = ?', (response, id))
         c_analysis.execute('UPDATE analysis SET response = ? WHERE id = ?', (response, id))
     conn_query.commit()
     conn_analysis.commit()
