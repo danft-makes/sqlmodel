@@ -54,8 +54,8 @@ def populate_analysis_table(cursor):
     with open('./db/queries.json', 'r', encoding='latin-1') as f:
         queries = json.load(f)
         for query in queries:
-            cursor.execute('INSERT INTO analysis (query, response, gold) VALUES (?, ?, ?)',
-                           (query['query'], '', query['gold']))
+            cursor.execute('INSERT INTO trio (query, gold) VALUES (?, ?)',
+                           (query['query'], query['gold']))
 
 
 
