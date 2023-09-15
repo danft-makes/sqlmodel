@@ -2,3 +2,4 @@
 .python-*
 # Ignore model directory
 models/
+__pycache*

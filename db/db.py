@@ -2,11 +2,22 @@ import sqlite3
 from faker import Faker
 
 # Create a new SQLite database
-def create_db():
-    conn = sqlite3.connect('dmp.db')
+def create_query_db() -> None:
+    conn = sqlite3.connect('query_db.db')
     c = conn.cursor()
 
-    # Creating the tables
+    # Creating the table
+    c.execute('''CREATE TABLE IF NOT EXISTS trio 
+                 (id INTEGER PRIMARY KEY, query TEXT NOT NULL, gold TEXT NOT NULL)''')
+
+    conn.commit()
+    conn.close()
+
+def create_analysis_db() -> None:
+    conn = sqlite3.connect('analysis_db.db')
+    c = conn.cursor()
+
+    # Tables from the create_db function
     c.execute('''CREATE TABLE IF NOT EXISTS product 
                  (product_id INTEGER PRIMARY KEY, name TEXT NOT NULL, category TEXT NOT NULL, creation_date DATE NOT NULL, description TEXT)''')
 
@@ -27,12 +38,19 @@ def create_db():
                  FOREIGN KEY(branch_id) REFERENCES branch(branch_id),
                  FOREIGN KEY(product_id) REFERENCES product(product_id))''')
 
+    # Additional analysis table
+    c.execute('''CREATE TABLE IF NOT EXISTS analysis 
+                 (id INTEGER PRIMARY KEY, query TEXT NOT NULL, response TEXT NOT NULL, gold TEXT NOT NULL)''')
+
     conn.commit()
     conn.close()
 
+
+
+
 # Populate the database with dummy data
-def populate_db():
-    conn = sqlite3.connect('dmp.db')
+def populate_db() -> None:
+    conn = sqlite3.connect('analysis_db.db')
     c = conn.cursor()
     fake = Faker()
 
@@ -84,8 +102,7 @@ def populate_db():
 
 
 if __name__ == "__main__":
-    create_db()
+    create_query_db()
+    create_analysis_db()
     populate_db()
     print("Database created and populated!")
-
-
