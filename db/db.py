@@ -4,7 +4,7 @@ from faker import Faker
 
 # Create a new SQLite database
 def create_query_db() -> None:
-    conn = sqlite3.connect('query_db.db')
+    conn = sqlite3.connect('query.db')
     c = conn.cursor()
 
     # Creating the table
@@ -15,7 +15,7 @@ def create_query_db() -> None:
     conn.close()
 
 def create_analysis_db() -> None:
-    conn = sqlite3.connect('analysis_db.db')
+    conn = sqlite3.connect('analysis.db')
     c = conn.cursor()
 
     # Tables from the create_db function
@@ -61,7 +61,7 @@ def populate_analysis_table(cursor):
 
 # Populate the database with dummy data
 def populate_db() -> None:
-    conn = sqlite3.connect('analysis_db.db')
+    conn = sqlite3.connect('analysis.db')
     c = conn.cursor()
     fake = Faker()
 
