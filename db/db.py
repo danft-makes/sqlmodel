@@ -61,10 +61,26 @@ def populate_analysis_table(cursor):
 
 
 # Populate the database with dummy data
+def sync_with_queries_db():
+    conn_query = sqlite3.connect('query.db')
+    c_query = conn_query.cursor()
+    c_query.execute('SELECT * FROM trio')
+    rows = c_query.fetchall()
+
+    conn_analysis = sqlite3.connect('analysis.db')
+    c_analysis = conn_analysis.cursor()
+    for row in rows:
+        c_analysis.execute('INSERT INTO analysis (id, query, gold) VALUES (?, ?, ?)', (row[0], row[1], row[2]))
+
+    conn_query.close()
+    conn_analysis.commit()
+    conn_analysis.close()
+
 def populate_db() -> None:
     conn = sqlite3.connect('analysis.db')
     c = conn.cursor()
     fake = Faker()
+    sync_with_queries_db()
 
     branch_names = ['North Branch', 'South Branch', 'East Branch', 'West Branch', 'Central Branch']
     common_cities = [fake.city() for _ in range(5)]  # 5 common cities
