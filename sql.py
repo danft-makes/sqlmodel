@@ -7,7 +7,7 @@ from langchain.prompts import PromptTemplate
 
 from prompts import _DEFAULT_TEMPLATE
 
-db = SQLDatabase.from_uri("sqlite:///dmp.db")  # Load the SQLite database
+db = SQLDatabase.from_uri("sqlite:///db/analysis_db.db")  # Load the SQLite database
 callback_manager = CallbackManager([StreamingStdOutCallbackHandler()])  # Initialize the callback manager
 llm = LlamaCpp(
     model_path="models/wizard.gguf",
