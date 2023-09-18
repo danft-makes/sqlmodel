@@ -9,7 +9,7 @@ from prompts import _DEFAULT_TEMPLATE
 
 callback_manager = CallbackManager([StreamingStdOutCallbackHandler()])  # Initialize the callback manager
 llm = LlamaCpp(
-    model_path="models/wizard.gguf",
+    model_path="models/wizardcoder-python-34b-v1.0.Q4_K_M.gguf",
     callback_manager=callback_manager,
     verbose=False,
     max_tokens=500,
