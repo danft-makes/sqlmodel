@@ -41,6 +41,8 @@ Table branch has columns = [branch_id,manager_id,city]
 Table product has columns = [product_id,name,category,creation_date,description]
 JOINS ARE = [sales.customer_id = customer.customer_id, sales.branch_id = branch.branch_id, sales.product_id = product.product_id, inventory.product_id = product.product_id, inventory.branch_id = branch.branch_id, branch.manager_id = manager.manager_id]
 
+rfm_class can be four values: 'Precisam de atenção', 'Em risco', 'Nao pode perde-los', 'Esfriando'. If someone asks what client they should visit you must search for the rfm_class 'Em risco'.
+
 Question: {input}
 ### Response: 
 """
