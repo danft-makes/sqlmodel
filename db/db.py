@@ -3,14 +3,18 @@ import json
 from faker import Faker
 
 # Create a new SQLite database
+def connect_to_db(db_name):
+    conn = sqlite3.connect(db_name)
+    return conn.cursor()
+
+def create_table(c, table_name, columns):
+    c.execute(f'''CREATE TABLE IF NOT EXISTS {table_name} {columns}''')
+
 def create_query_db() -> None:
-    conn = sqlite3.connect('queries.db')
-    c = conn.cursor()
+    c = connect_to_db('queries.db')
 
     # Creating the table
-    c.execute('''CREATE TABLE IF NOT EXISTS trio 
-                 (id INTEGER PRIMARY KEY, query TEXT NOT NULL, gold TEXT NOT NULL)''')
-
+    create_table(c, 'trio', '(id INTEGER PRIMARY KEY, query TEXT NOT NULL, gold TEXT NOT NULL)')
 
     # Populate the analysis table
     populate_queries_db(c)
@@ -19,33 +23,17 @@ def create_query_db() -> None:
     conn.close()
 
 def create_analysis_db() -> None:
-    conn = sqlite3.connect('analysis.db')
-    c = conn.cursor()
+    c = connect_to_db('analysis.db')
 
     # Tables from the create_db function
-    c.execute('''CREATE TABLE IF NOT EXISTS product 
-                 (product_id INTEGER PRIMARY KEY, name TEXT NOT NULL, category TEXT NOT NULL, creation_date DATE NOT NULL, description TEXT)''')
-
-    c.execute('''CREATE TABLE IF NOT EXISTS branch 
-                 (branch_id INTEGER PRIMARY KEY, manager_name TEXT NOT NULL, city TEXT NOT NULL, branch_name TEXT NOT NULL)''')
-
-    c.execute('''CREATE TABLE IF NOT EXISTS customer 
-                 (customer_id INTEGER PRIMARY KEY, customer_age INTEGER NOT NULL, creation_date DATE NOT NULL, rfm_class TEXT NOT NULL, name TEXT NOT NULL, city TEXT NOT NULL, phone TEXT NOT NULL, last_purchase_date DATE NOT NULL)''')
-
-    c.execute('''CREATE TABLE IF NOT EXISTS inventory 
-                 (inventory_id INTEGER PRIMARY KEY, product_id INTEGER NOT NULL, branch_id INTEGER NOT NULL, quantity INTEGER NOT NULL,
-                 FOREIGN KEY(product_id) REFERENCES product(product_id),
-                 FOREIGN KEY(branch_id) REFERENCES branch(branch_id))''')
-
-    c.execute('''CREATE TABLE IF NOT EXISTS sales 
-                 (sale_id INTEGER PRIMARY KEY, sale_date DATE NOT NULL, customer_id INTEGER NOT NULL, branch_id INTEGER NOT NULL, product_id INTEGER NOT NULL, quantity INTEGER NOT NULL, total_price REAL NOT NULL,
-                 FOREIGN KEY(customer_id) REFERENCES customer(customer_id),
-                 FOREIGN KEY(branch_id) REFERENCES branch(branch_id),
-                 FOREIGN KEY(product_id) REFERENCES product(product_id))''')
+    create_table(c, 'product', '(product_id INTEGER PRIMARY KEY, name TEXT NOT NULL, category TEXT NOT NULL, creation_date DATE NOT NULL, description TEXT)')
+    create_table(c, 'branch', '(branch_id INTEGER PRIMARY KEY, manager_name TEXT NOT NULL, city TEXT NOT NULL, branch_name TEXT NOT NULL)')
+    create_table(c, 'customer', '(customer_id INTEGER PRIMARY KEY, customer_age INTEGER NOT NULL, creation_date DATE NOT NULL, rfm_class TEXT NOT NULL, name TEXT NOT NULL, city TEXT NOT NULL, phone TEXT NOT NULL, last_purchase_date DATE NOT NULL)')
+    create_table(c, 'inventory', '(inventory_id INTEGER PRIMARY KEY, product_id INTEGER NOT NULL, branch_id INTEGER NOT NULL, quantity INTEGER NOT NULL, FOREIGN KEY(product_id) REFERENCES product(product_id), FOREIGN KEY(branch_id) REFERENCES branch(branch_id))')
+    create_table(c, 'sales', '(sale_id INTEGER PRIMARY KEY, sale_date DATE NOT NULL, customer_id INTEGER NOT NULL, branch_id INTEGER NOT NULL, product_id INTEGER NOT NULL, quantity INTEGER NOT NULL, total_price REAL NOT NULL, FOREIGN KEY(customer_id) REFERENCES customer(customer_id), FOREIGN KEY(branch_id) REFERENCES branch(branch_id), FOREIGN KEY(product_id) REFERENCES product(product_id))')
 
     # Additional analysis table
-    c.execute('''CREATE TABLE IF NOT EXISTS analysis 
-                 (id INTEGER PRIMARY KEY, query TEXT NOT NULL, response TEXT NOT NULL, gold TEXT NOT NULL)''')
+    create_table(c, 'analysis', '(id INTEGER PRIMARY KEY, query TEXT NOT NULL, response TEXT NOT NULL, gold TEXT NOT NULL)')
 
     conn.commit()
     conn.close()

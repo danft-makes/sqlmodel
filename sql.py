@@ -8,13 +8,27 @@ from langchain.prompts import PromptTemplate
 from prompts import _DEFAULT_TEMPLATE
 from constants import *
 
-if __name__=='__main__':
-    callback_manager = CallbackManager([StreamingStdOutCallbackHandler()])  # Initialize the callback manager
+def choose_model():
     CHOOSE_MODEL = input("7b or 13b?")
     if "7" in CHOOSE_MODEL:
-        MODEL_PATH = "/home/shared/airoboros-l2-7b-2.2.Q4_K_M.gguf"
+        return "/home/shared/airoboros-l2-7b-2.2.Q4_K_M.gguf"
     else:
-        MODEL_PATH = "/home/shared/airoboros-l2-13b-2.2.Q4_K_M.gguf"
+        return "/home/shared/airoboros-l2-13b-2.2.Q4_K_M.gguf"
+
+def connect_to_db(db_name):
+    conn = sqlite3.connect(db_name)
+    return conn.cursor()
+
+def execute_query(c_query):
+    c_query.execute('SELECT id, query FROM trio')
+    return c_query.fetchall()
+
+def update_analysis(c_analysis, id, response):
+    c_analysis.execute('UPDATE analysis SET response = ? WHERE id = ?', (response, id))
+
+if __name__=='__main__':
+    callback_manager = CallbackManager([StreamingStdOutCallbackHandler()])  # Initialize the callback manager
+    MODEL_PATH = choose_model()
     llm = LlamaCpp(
         model_path=MODEL_PATH,
         callback_manager=callback_manager,
@@ -27,16 +41,13 @@ if __name__=='__main__':
     )
     chain = LLMChain(llm=llm, prompt=prompt)
 
-    conn_query = sqlite3.connect('db/queries.db')
-    c_query = conn_query.cursor()
-    conn_analysis = sqlite3.connect('db/analysis.db')
-    c_analysis = conn_analysis.cursor()
-    c_query.execute('SELECT id, query FROM trio')
-    queries = c_query.fetchall()
+    c_query = connect_to_db('db/queries.db')
+    c_analysis = connect_to_db('db/analysis.db')
+    queries = execute_query(c_query)
     for id, query in queries:
         QUERY = {'input': query, 'metavars':metavars, 'text1':text1, 'text2':text2}
         response = chain.run(QUERY)
-        c_analysis.execute('UPDATE analysis SET response = ? WHERE id = ?', (response, id))
+        update_analysis(c_analysis, id, response)
     conn_query.commit()
     conn_analysis.commit()
     conn_query.close()
