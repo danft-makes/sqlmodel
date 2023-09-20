@@ -1,5 +1,4 @@
 import os
-import sqlite3
 from langchain.llms import LlamaCpp, OpenAI
 from langchain.utilities import SQLDatabase
 from langchain.callbacks.manager import CallbackManager
@@ -8,33 +7,43 @@ from langchain.chains import LLMChain
 from langchain.prompts import PromptTemplate
 from prompts import _CLOSEINSTRUCTION_TEMPLATE
 from constants import *
+from utils import ModelChooser, DatabaseManager
 
-ALLMODELS = {'gpt4':'gpt4','airoboros-7b-2.2-Q4':'/home/shared/models/airoboros-l2-7b-2.2.Q4_K_M.gguf','airoboros-13b-2.2-Q4':'/home/shared/models/airoboros-l2-13b-2.2.Q4_K_M.gguf','airoboros-13b-m2.0-Q5':'/home/shared/models/airoboros-l2-13b-gpt4-m2.0.Q5_K_M.gguf'}
+def main():
+    callback_manager = CallbackManager([StreamingStdOutCallbackHandler()])  # Initialize the callback manager
+    MODEL_PATH = ModelChooser.choose_model()
+    if MODEL_PATH=="gpt4":
+        print("\nUsing OpenAI api key...\n")
+        llm = OpenAI(temperature=0.0)
+    elif MODEL_PATH=="ALL":
+        #TODO rodar todos os modelos, precisamos quebrar a main
+    else:
+        llm = LlamaCpp(
+            model_path=MODEL_PATH,
+            callback_manager=callback_manager,
+            verbose=True,
+            temperature=0,
+        )
 
-def choose_model():
-    CHOOSE_MODEL = input("model: ")
-    if 'gpt' in CHOOSE_MODEL:
-        print("Using GPT-4 model")
-        return ALLMODELS["gpt4"]
-    if "7" in CHOOSE_MODEL:
-        return ALLMODELS["airoboros-7b-2.2-Q4"] 
-    if "13" in CHOOSE_MODEL:
-        return ALLMODELS["airoboros-13b-2.2-Q4"] 
-    if CHOOSE_MODEL=="ALL":
-        return "ALL"
-    else: 
-        return ALLMODELS["airoboros-13b-m2.0-Q5"]
+    prompt = PromptTemplate(
+            input_variables=["input","text1","text2","metavars"], template=_CLOSEINSTRUCTION_TEMPLATE # vars in string format 'key0:value0\nkey1:value1\n...\nkeyn:valuen
+    )
+    chain = LLMChain(llm=llm, prompt=prompt)
 
-def connect_to_db(db_name):
-    conn = sqlite3.connect(db_name)
-    return conn, conn.cursor()
+    conn_query, c_query = DatabaseManager.connect_to_db('db/queries.db')
+    conn_analysis, c_analysis = DatabaseManager.connect_to_db('db/analysis.db')
+    queries = DatabaseManager.execute_query(c_query)
+    for id, query in queries:
+        QUERY = {'input': query, 'metavars':metavars, 'text1':text1, 'text2':text2}
+        response = chain.run(QUERY)
+        DatabaseManager.update_analysis(c_analysis, id, response)
+    conn_query.commit()
+    conn_analysis.commit()
+    c_query.close()
+    c_analysis.close()
 
-def execute_query(c_query):
-    c_query.execute('SELECT id, query FROM trio')
-    return c_query.fetchall()
-
-def update_analysis(c_analysis, id, response):
-    c_analysis.execute('UPDATE analysis SET response = ? WHERE id = ?', (response, id))
+if __name__=='__main__':
+    main()
 
 if __name__=='__main__':
     callback_manager = CallbackManager([StreamingStdOutCallbackHandler()])  # Initialize the callback manager
