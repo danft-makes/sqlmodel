@@ -14,7 +14,7 @@ def initialize_llm(MODEL_PATH):
     callback_manager = CallbackManager([StreamingStdOutCallbackHandler()])  # Initialize the callback manager
     if MODEL_PATH=="gpt4":
         print("\nUsing OpenAI api key...\n")
-        llm = OpenAI(temperature=0.0)
+        llm = OpenAI(temperature=0.0,verbose=True,streaming=True,callback_manager=callback_manager)
     #elif isinstance(MODEL_PATH,list):
         # run the main for every model in the list MODEL_PATH
     else:
