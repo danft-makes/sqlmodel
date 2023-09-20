@@ -1,3 +1,4 @@
+import os
 import sqlite3
 from langchain.llms import LlamaCpp
 from langchain.utilities import SQLDatabase
@@ -7,13 +8,19 @@ from langchain.chains import LLMChain
 from langchain.prompts import PromptTemplate
 from prompts import _DEFAULT_TEMPLATE
 from constants import *
+from openai import OpenAI
 
 def choose_model():
-    CHOOSE_MODEL = input("7b or 13b?")
-    if "7" in CHOOSE_MODEL:
-        return "/home/shared/airoboros-l2-7b-2.2.Q4_K_M.gguf"
+    USE_GPT4 = os.getenv('USE_GPT4', 'False').lower() in ['true', '1', 't', 'y', 'yes']
+    if USE_GPT4:
+        print("Using GPT-4 model")
+        return "/path/to/gpt4/model"
     else:
-        return "/home/shared/airoboros-l2-13b-2.2.Q4_K_M.gguf"
+        CHOOSE_MODEL = input("7b or 13b?")
+        if "7" in CHOOSE_MODEL:
+            return "/home/shared/airoboros-l2-7b-2.2.Q4_K_M.gguf"
+        else:
+            return "/home/shared/airoboros-l2-13b-2.2.Q4_K_M.gguf"
 
 def connect_to_db(db_name):
     conn = sqlite3.connect(db_name)
