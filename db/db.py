@@ -5,13 +5,13 @@ from faker import Faker
 # Create a new SQLite database
 def connect_to_db(db_name):
     conn = sqlite3.connect(db_name)
-    return conn.cursor()
+    return conn, conn.cursor()
 
 def create_table(c, table_name, columns):
     c.execute(f'''CREATE TABLE IF NOT EXISTS {table_name} {columns}''')
 
 def create_query_db() -> None:
-    c = connect_to_db('queries.db')
+    conn, c = connect_to_db('queries.db')
 
     # Creating the table
     create_table(c, 'trio', '(id INTEGER PRIMARY KEY, query TEXT NOT NULL, gold TEXT NOT NULL)')
@@ -23,7 +23,7 @@ def create_query_db() -> None:
     conn.close()
 
 def create_analysis_db() -> None:
-    c = connect_to_db('analysis.db')
+    conn, c = connect_to_db('analysis.db')
 
     # Tables from the create_db function
     create_table(c, 'product', '(product_id INTEGER PRIMARY KEY, name TEXT NOT NULL, category TEXT NOT NULL, creation_date DATE NOT NULL, description TEXT)')
