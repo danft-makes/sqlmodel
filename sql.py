@@ -17,6 +17,7 @@ def main():
         llm = OpenAI(temperature=0.0)
     elif MODEL_PATH=="ALL":
         #TODO rodar todos os modelos, precisamos quebrar a main
+        pass
     else:
         llm = LlamaCpp(
             model_path=MODEL_PATH,
