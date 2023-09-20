@@ -6,7 +6,7 @@ from langchain.callbacks.manager import CallbackManager
 from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
 from langchain.chains import LLMChain
 from langchain.prompts import PromptTemplate
-from prompts import _DEFAULT_TEMPLATE
+from prompts import _CLOSEINSTRUCTION_TEMPLATE
 from constants import *
 
 def choose_model():
@@ -45,7 +45,7 @@ if __name__=='__main__':
         )
 
     prompt = PromptTemplate(
-            input_variables=["input","text1","text2","metavars"], template=_DEFAULT_TEMPLATE # vars in string format 'key0:value0\nkey1:value1\n...\nkeyn:valuen
+            input_variables=["input","text1","text2","metavars"], template=_CLOSEINSTRUCTION_TEMPLATE # vars in string format 'key0:value0\nkey1:value1\n...\nkeyn:valuen
     )
     chain = LLMChain(llm=llm, prompt=prompt)
 
