@@ -36,12 +36,15 @@ def update_analysis(c_analysis, id, response):
 if __name__=='__main__':
     callback_manager = CallbackManager([StreamingStdOutCallbackHandler()])  # Initialize the callback manager
     MODEL_PATH = choose_model()
-    llm = LlamaCpp(
-        model_path=MODEL_PATH,
-        callback_manager=callback_manager,
-        verbose=True,
-        temperature=0,
-    )
+    if 'gpt' in MODEL_PATH:
+        llm = OpenAI(temperature=0.0)
+    else:
+        llm = LlamaCpp(
+            model_path=MODEL_PATH,
+            callback_manager=callback_manager,
+            verbose=True,
+            temperature=0,
+        )
 
     prompt = PromptTemplate(
             input_variables=["input","text1","text2","metavars"], template=_DEFAULT_TEMPLATE # vars in string format 'key0:value0\nkey1:value1\n...\nkeyn:valuen
