@@ -9,19 +9,21 @@ from langchain.prompts import PromptTemplate
 from prompts import _CLOSEINSTRUCTION_TEMPLATE
 from constants import *
 
-ALLMODELS = ['gpt4','/home/shared/models/airoboros-l2-7b-2.2.Q4_K_M.gguf','/home/shared/models/airoboros-l2-13b-2.2.Q4_K_M.gguf','/home/shared/models/airoboros-l2-13b-gpt4-m2.0.Q5_K_M.gguf' ]
+ALLMODELS = {'gpt4':'gpt4','airoboros-7b-2.2-Q4':'/home/shared/models/airoboros-l2-7b-2.2.Q4_K_M.gguf','airoboros-13b-2.2-Q4':'/home/shared/models/airoboros-l2-13b-2.2.Q4_K_M.gguf','airoboros-13b-m2.0-Q5':'/home/shared/models/airoboros-l2-13b-gpt4-m2.0.Q5_K_M.gguf'}
 
 def choose_model():
-    CHOOSE_MODEL = input("7b, 13b, gpt4?\n")
+    CHOOSE_MODEL = input("model: ")
     if 'gpt' in CHOOSE_MODEL:
         print("Using GPT-4 model")
-        return "gpt4"
+        return ALLMODELS["gpt4"]
     if "7" in CHOOSE_MODEL:
-        return "/home/shared/airoboros-l2-7b-2.2.Q4_K_M.gguf"
+        return ALLMODELS["airoboros-7b-2.2-Q4"] 
     if "13" in CHOOSE_MODEL:
-        return "/home/shared/airoboros-l2-13b-2.2.Q4_K_M.gguf"
+        return ALLMODELS["airoboros-13b-2.2-Q4"] 
     if CHOOSE_MODEL=="ALL":
         return "ALL"
+    else: 
+        return ALLMODELS["airoboros-13b-m2.0-Q5"]
 
 def connect_to_db(db_name):
     conn = sqlite3.connect(db_name)
@@ -37,9 +39,11 @@ def update_analysis(c_analysis, id, response):
 if __name__=='__main__':
     callback_manager = CallbackManager([StreamingStdOutCallbackHandler()])  # Initialize the callback manager
     MODEL_PATH = choose_model()
-    if 'gpt' in MODEL_PATH:
+    if MODEL_PATH=="gpt4":
         print("\nUsing OpenAI api key...\n")
         llm = OpenAI(temperature=0.0)
+    elif MODEL_PATH=="ALL":
+        #TODO rodar todos os modelos, precisamos quebrar a main
     else:
         llm = LlamaCpp(
             model_path=MODEL_PATH,
