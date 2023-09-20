@@ -15,7 +15,7 @@ def initialize_llm(MODEL_PATH):
     if MODEL_PATH=="gpt4":
         print("\nUsing OpenAI api key...\n")
         llm = OpenAI(temperature=0.0)
-    elif isinstance(MODEL_PATH,list):
+    #elif isinstance(MODEL_PATH,list):
         # run the main for every model in the list MODEL_PATH
     else:
         llm = LlamaCpp(
@@ -32,7 +32,7 @@ def initialize_db():
     conn_analysis, c_analysis = DatabaseManager.connect_to_db('db/analysis.db')
     return conn_query, c_query, conn_analysis, c_analysis
 
-def run_queries(chain, c_query, c_analysis):
+def run_queries(chain, c_query, c_analysis, conn_query, conn_analysis):
     queries = DatabaseManager.execute_query(c_query)
     for id, query in queries:
         QUERY = {'input': query, 'metavars':metavars, 'text1':text1, 'text2':text2}
@@ -51,7 +51,7 @@ def main():
     )
     chain = LLMChain(llm=llm, prompt=prompt)
     conn_query, c_query, conn_analysis, c_analysis = initialize_db()
-    run_queries(chain, c_query, c_analysis)
+    run_queries(chain, c_query, c_analysis, conn_query, conn_analysis)
 
 if __name__=='__main__':
     main()
