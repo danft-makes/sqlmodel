@@ -9,6 +9,8 @@ from langchain.prompts import PromptTemplate
 from prompts import _CLOSEINSTRUCTION_TEMPLATE
 from constants import *
 
+ALLMODELS = ['gpt4','/home/shared/airoboros-l2-7b-2.2.Q4_K_M.gguf','/home/shared/airoboros-l2-13b-2.2.Q4_K_M.gguf']
+
 def choose_model():
     CHOOSE_MODEL = input("7b, 13b, gpt4?\n")
     if 'gpt' in CHOOSE_MODEL:
@@ -16,8 +18,10 @@ def choose_model():
         return "gpt4"
     if "7" in CHOOSE_MODEL:
         return "/home/shared/airoboros-l2-7b-2.2.Q4_K_M.gguf"
-    else:
+    if "13" in CHOOSE_MODEL:
         return "/home/shared/airoboros-l2-13b-2.2.Q4_K_M.gguf"
+    if CHOOSE_MODEL=="ALL":
+        return "ALL"
 
 def connect_to_db(db_name):
     conn = sqlite3.connect(db_name)
