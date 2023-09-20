@@ -9,7 +9,7 @@ from langchain.prompts import PromptTemplate
 from prompts import _CLOSEINSTRUCTION_TEMPLATE
 from constants import *
 
-ALLMODELS = ['gpt4','/home/shared/airoboros-l2-7b-2.2.Q4_K_M.gguf','/home/shared/airoboros-l2-13b-2.2.Q4_K_M.gguf']
+ALLMODELS = ['gpt4','/home/shared/models/airoboros-l2-7b-2.2.Q4_K_M.gguf','/home/shared/models/airoboros-l2-13b-2.2.Q4_K_M.gguf','/home/shared/models/airoboros-l2-13b-gpt4-m2.0.Q5_K_M.gguf' ]
 
 def choose_model():
     CHOOSE_MODEL = input("7b, 13b, gpt4?\n")
