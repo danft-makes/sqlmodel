@@ -29,7 +29,8 @@ class Agente:
             )
     
     def initialize_db(self):
-        self.conn_query, self.c_query, self.conn_analysis, self.c_analysis = DatabaseManager.connect_to_db('db/queries.db'), DatabaseManager.connect_to_db('db/analysis.db')
+        self.conn_query, self.c_query = DatabaseManager.connect_to_db('db/queries.db')
+        self.conn_analysis, self.c_analysis = DatabaseManager.connect_to_db('db/analysis.db')
     
     def run_queries(self, chain):
         queries = DatabaseManager.execute_query(self.c_query)
