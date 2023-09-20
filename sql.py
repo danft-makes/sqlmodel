@@ -21,7 +21,7 @@ def choose_model():
 
 def connect_to_db(db_name):
     conn = sqlite3.connect(db_name)
-    return conn.cursor()
+    return conn, conn.cursor()
 
 def execute_query(c_query):
     c_query.execute('SELECT id, query FROM trio')
@@ -49,14 +49,14 @@ if __name__=='__main__':
     )
     chain = LLMChain(llm=llm, prompt=prompt)
 
-    c_query = connect_to_db('db/queries.db')
-    c_analysis = connect_to_db('db/analysis.db')
+    conn_query, c_query = connect_to_db('db/queries.db')
+    conn_analysis, c_analysis = connect_to_db('db/analysis.db')
     queries = execute_query(c_query)
     for id, query in queries:
         QUERY = {'input': query, 'metavars':metavars, 'text1':text1, 'text2':text2}
         response = chain.run(QUERY)
         update_analysis(c_analysis, id, response)
-    c_query.commit()
-    c_analysis.commit()
+    conn_query.commit()
+    conn_analysis.commit()
     c_query.close()
     c_analysis.close()
