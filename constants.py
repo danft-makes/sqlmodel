@@ -1,6 +1,6 @@
 metavars="""Table inventory columns: [inventory_id,product_id,branch_id,quantity]
 Table sales columns: [sale_id,sale_date,customer_id,branch_id,product_id,quantity,total_price]
-Table customer columns: [branch_id,manager_id,city]
+Table customer has columns: [customer_id,creation_date,rfm_class,name,city,phone,last_purchase_date]
 Table branch columns: [branch_id,manager_id,city]
 Table product columns: [product_id,name,category,creation_date,description]
 JOINS: [sales.customer_id = customer.customer_id, sales.branch_id = branch.branch_id, sales.product_id = product.product_id, inventory.product_id = product.product_id, inventory.branch_id = branch.branch_id, branch.manager_id = manager.manager_id]"""

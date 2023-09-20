@@ -1,3 +1,5 @@
+import sqlite3
+
 class ModelChooser:
     ALLMODELS = {'gpt4':'gpt4','airoboros-7b-2.2-Q4':'/home/shared/models/airoboros-l2-7b-2.2.Q4_K_M.gguf','airoboros-13b-2.2-Q4':'/home/shared/models/airoboros-l2-13b-2.2.Q4_K_M.gguf','airoboros-13b-m2.0-Q5':'/home/shared/models/airoboros-l2-13b-gpt4-m2.0.Q5_K_M.gguf'}
 
@@ -12,7 +14,12 @@ class ModelChooser:
         if "13" in CHOOSE_MODEL:
             return ModelChooser.ALLMODELS["airoboros-13b-2.2-Q4"] 
         if CHOOSE_MODEL=="ALL":
-            return "ALL"
+            LOCALMODELS = []
+            for key in CHOOSE_MODEL.keys():
+                if key=='gpt4':
+                    continue
+                LOCALMODELS.append(CHOOSE_MODEL[key])
+            return LOCALMODELS 
         else: 
             return ModelChooser.ALLMODELS["airoboros-13b-m2.0-Q5"]
 
