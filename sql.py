@@ -10,9 +10,8 @@ from prompts import _CLOSEINSTRUCTION_TEMPLATE
 from constants import *
 from utils import ModelChooser, DatabaseManager
 
-def main():
+def initialize_llm(MODEL_PATH):
     callback_manager = CallbackManager([StreamingStdOutCallbackHandler()])  # Initialize the callback manager
-    MODEL_PATH = ModelChooser.choose_model()
     if MODEL_PATH=="gpt4":
         print("\nUsing OpenAI api key...\n")
         llm = OpenAI(temperature=0.0)
@@ -26,14 +25,14 @@ def main():
             temperature=0,
             max_tokens=750
         )
+    return llm
 
-    prompt = PromptTemplate(
-            input_variables=["input","text1","text2","metavars"], template=_CLOSEINSTRUCTION_TEMPLATE # vars in string format 'key0:value0\nkey1:value1\n...\nkeyn:valuen
-    )
-    chain = LLMChain(llm=llm, prompt=prompt)
-
+def initialize_db():
     conn_query, c_query = DatabaseManager.connect_to_db('db/queries.db')
     conn_analysis, c_analysis = DatabaseManager.connect_to_db('db/analysis.db')
+    return conn_query, c_query, conn_analysis, c_analysis
+
+def run_queries(chain, c_query, c_analysis):
     queries = DatabaseManager.execute_query(c_query)
     for id, query in queries:
         QUERY = {'input': query, 'metavars':metavars, 'text1':text1, 'text2':text2}
@@ -43,6 +42,16 @@ def main():
     conn_analysis.commit()
     c_query.close()
     c_analysis.close()
+
+def main():
+    MODEL_PATH = ModelChooser.choose_model()
+    llm = initialize_llm(MODEL_PATH)
+    prompt = PromptTemplate(
+            input_variables=["input","text1","text2","metavars"], template=_CLOSEINSTRUCTION_TEMPLATE # vars in string format 'key0:value0\nkey1:value1\n...\nkeyn:valuen
+    )
+    chain = LLMChain(llm=llm, prompt=prompt)
+    conn_query, c_query, conn_analysis, c_analysis = initialize_db()
+    run_queries(chain, c_query, c_analysis)
 
 if __name__=='__main__':
     main()
