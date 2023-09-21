@@ -1,5 +1,5 @@
 import sqlite3
-from db.db import LOCALMODELSLIST,ALLMODELS
+from db import LOCALMODELSLIST,ALLMODELS
 
 class SQLiteValidator: #TODO
 
@@ -75,3 +75,44 @@ class DatabaseManager:
     def update_analysis(c_analysis, id, response,MODEL_TAG=""):
         print(f'response is {response}\nMODEL_TAG is {MODEL_TAG}\n')
         c_analysis.execute('UPDATE analysis SET response'+MODEL_TAG+' = ? WHERE id = ?', (response, id))
+
+
+class SQLQuery:
+    def __init__(self, query):
+        self.query = query
+        self.is_valid = is_valid_syntax(query)
+        self.query_classification = self._classify_query() if not self.is_valid else None
+
+    def _classify_query(self):
+        # Classify the query if it's not valid
+        return query_type(self.query)
+
+    @classmethod
+    def from_db(cls, db_path):
+        # Load SQL queries from a .db file and instantiate multiple SQLQuery objects
+        queries = load_queries_from_db(db_path)
+        return [cls(query) for query in queries]
+
+# Example hypothetical functions:
+def is_valid_syntax(query): #TODO
+    # Check if the SQL query has valid syntax
+    return True if "SELECT" in query else False
+
+def query_type(query): #TODO
+    # Classify the type of error in the query
+    if "SELECT" not in query:
+        return "incomplete query"
+    return "unknown error"
+
+def load_queries_from_db(db_path):
+    # Load SQL queries from a .db file
+    return ["SELECT * FROM users", "SELECT name FROM", "DELETE FROM users WHERE id=1; SELECT"]
+
+# To use the SQLQuery class to analyze a .db file:
+if __name__ == "__main__":
+    queries = SQLQuery.from_db("path_to_db_file.db")
+    for query_obj in queries:
+        if not query_obj.is_valid:
+            print(f"Query: {query_obj.query}")
+            print(f"Classification: {query_obj.query_classification}")
+

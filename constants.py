@@ -21,3 +21,12 @@ else:
 
 instruction=metavars+'\n'+text1+'\n'+text2
 db_info="""∣ manager : manager_id , name , performance_class ∣ sales : sale_id , sale_date , quantity , total_price , customer_id , branch_id , product_id ∣ customer : customer_id , creation_date , rfm_class , name , phone , last_purchase_date , city ∣ branch : branch_id , city , manager_id ∣ product : product_id , name , creation_date , description , category ∣ sales.customer_id = customer.customer_id ∣ sales.branch_id = branch.branch_id ∣ sales.product_id = product.product_id ∣ branch.manager_id = manager.manager_id ∣"""
+
+sqlite_metavars="dialect: sqlite"
+sqlite_text1="You are a syntax checker. You must only check if the user input is syntactically correct and return True if it passes the criteria given, or False if it is syntactically incorrect. Here, syntactically correct means it will pass as a sqlite query"
+sqlite_text2="Remember, answer only True or False whether it passes or not as a sqlite query"
+
+sqlclass_metavars="""Justification: ['Incomplete','Correct With Additional Garbage','Completely Lost','Invalid Columns']
+db_info: """+db_info
+sqlclass_text1="You must check if the input is a syntactically correct sqlite query. If it is incorrect you must choose an appropriate class in 'Justification'."
+sqlclass_text2="Return only a class belonging to Justification!"
