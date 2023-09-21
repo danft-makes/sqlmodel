@@ -2,6 +2,16 @@ import sqlite3
 import json
 from faker import Faker
 
+db_path = "db/"
+configs_path = "configs/"
+
+with open(configs_path+"models_list.json","r") as f:
+    ALLMODELS = json.load(f)
+    
+LOCALMODELS = ALLMODELS
+LOCALMODELS.pop('gpt4')
+LOCALMODELSLIST = [model_name.replace('-','').replace('.','') for model_name in LOCALMODELS.keys()]
+
 # Create a new SQLite database
 def connect_to_db(db_name):
     conn = sqlite3.connect(db_name)
@@ -11,7 +21,7 @@ def create_table(c, table_name, columns):
     c.execute(f'''CREATE TABLE IF NOT EXISTS {table_name} {columns}''')
 
 def create_query_db() -> None:
-    conn, c = connect_to_db('queries.db')
+    conn, c = connect_to_db(db_path + 'queries.db')
 
     # Creating the table
     create_table(c, 'trio', '(id INTEGER PRIMARY KEY, query TEXT NOT NULL, gold TEXT NOT NULL)')
@@ -23,23 +33,39 @@ def create_query_db() -> None:
     conn.close()
 
 def create_analysis_db() -> None:
-    conn, c = connect_to_db('analysis.db')
-
+    conn, c = connect_to_db(db_path + 'analysis.db')
     # Tables from the create_db function
     create_table(c, 'product', '(product_id INTEGER PRIMARY KEY, name TEXT NOT NULL, category TEXT NOT NULL, creation_date DATE NOT NULL, description TEXT)')
     create_table(c, 'branch', '(branch_id INTEGER PRIMARY KEY, manager_name TEXT NOT NULL, city TEXT NOT NULL, branch_name TEXT NOT NULL)')
     create_table(c, 'customer', '(customer_id INTEGER PRIMARY KEY, customer_age INTEGER NOT NULL, creation_date DATE NOT NULL, rfm_class TEXT NOT NULL, name TEXT NOT NULL, city TEXT NOT NULL, phone TEXT NOT NULL, last_purchase_date DATE NOT NULL)')
     create_table(c, 'inventory', '(inventory_id INTEGER PRIMARY KEY, product_id INTEGER NOT NULL, branch_id INTEGER NOT NULL, quantity INTEGER NOT NULL, FOREIGN KEY(product_id) REFERENCES product(product_id), FOREIGN KEY(branch_id) REFERENCES branch(branch_id))')
     create_table(c, 'sales', '(sale_id INTEGER PRIMARY KEY, sale_date DATE NOT NULL, customer_id INTEGER NOT NULL, branch_id INTEGER NOT NULL, product_id INTEGER NOT NULL, quantity INTEGER NOT NULL, total_price REAL NOT NULL, FOREIGN KEY(customer_id) REFERENCES customer(customer_id), FOREIGN KEY(branch_id) REFERENCES branch(branch_id), FOREIGN KEY(product_id) REFERENCES product(product_id))')
-
     # Additional analysis table
     create_table(c, 'analysis', '(id INTEGER PRIMARY KEY, query TEXT NOT NULL, response TEXT NOT NULL, gold TEXT NOT NULL)')
-
     conn.commit()
     conn.close()
 
+def create_analysis_db_ALLMODELS() -> None:
+    conn, c = connect_to_db(db_path + 'analysis.db')
+    # Tables from the create_db function
+    create_table(c, 'product', '(product_id INTEGER PRIMARY KEY, name TEXT NOT NULL, category TEXT NOT NULL, creation_date DATE NOT NULL, description TEXT)')
+    create_table(c, 'branch', '(branch_id INTEGER PRIMARY KEY, manager_name TEXT NOT NULL, city TEXT NOT NULL, branch_name TEXT NOT NULL)')
+    create_table(c, 'customer', '(customer_id INTEGER PRIMARY KEY, customer_age INTEGER NOT NULL, creation_date DATE NOT NULL, rfm_class TEXT NOT NULL, name TEXT NOT NULL, city TEXT NOT NULL, phone TEXT NOT NULL, last_purchase_date DATE NOT NULL)')
+    create_table(c, 'inventory', '(inventory_id INTEGER PRIMARY KEY, product_id INTEGER NOT NULL, branch_id INTEGER NOT NULL, quantity INTEGER NOT NULL, FOREIGN KEY(product_id) REFERENCES product(product_id), FOREIGN KEY(branch_id) REFERENCES branch(branch_id))')
+    create_table(c, 'sales', '(sale_id INTEGER PRIMARY KEY, sale_date DATE NOT NULL, customer_id INTEGER NOT NULL, branch_id INTEGER NOT NULL, product_id INTEGER NOT NULL, quantity INTEGER NOT NULL, total_price REAL NOT NULL, FOREIGN KEY(customer_id) REFERENCES customer(customer_id), FOREIGN KEY(branch_id) REFERENCES branch(branch_id), FOREIGN KEY(product_id) REFERENCES product(product_id))')
+    # Additional analysis table
+    base_columns = '(id INTEGER PRIMARY KEY, query TEXT NOT NULL, gold TEXT NOT NULL)'
+    model_columns = ', '.join([f'response{model_name} TEXT' for model_name in LOCALMODELSLIST])
+
+    combined_columns = base_columns.rstrip(')') + ', ' + model_columns + ')'
+    create_table(c, 'analysis', combined_columns)
+    conn.commit()
+    conn.close()
+
+
+
 def populate_queries_db(cursor):
-    with open('queries.json', 'r', encoding='latin-1') as f:
+    with open(configs_path + 'queries.json', 'r', encoding='latin-1') as f:
         queries = json.load(f)
         for query in queries:
             cursor.execute('INSERT INTO trio (query, gold) VALUES (?, ?)',
@@ -50,22 +76,22 @@ def populate_queries_db(cursor):
 
 # Populate the database with dummy data
 def sync_with_queries_db():
-    conn_query = sqlite3.connect('queries.db')
+    conn_query = sqlite3.connect(db_path + 'queries.db')
     c_query = conn_query.cursor()
     c_query.execute('SELECT * FROM trio')
     rows = c_query.fetchall()
 
-    conn_analysis = sqlite3.connect('analysis.db')
+    conn_analysis = sqlite3.connect(db_path + 'analysis.db')
     c_analysis = conn_analysis.cursor()
     for row in rows:
-        c_analysis.execute('INSERT INTO analysis (id, query, response, gold) VALUES (?, ?, ?, ?)', (row[0], row[1], '', row[2]))
+        c_analysis.execute('INSERT INTO analysis (id, query, gold) VALUES (?, ?, ?)', (row[0], row[1], row[2]))
 
     conn_query.close()
     conn_analysis.commit()
     conn_analysis.close()
 
 def populate_db() -> None:
-    conn = sqlite3.connect('analysis.db')
+    conn = sqlite3.connect(db_path + 'analysis.db')
     c = conn.cursor()
     fake = Faker()
     sync_with_queries_db()
@@ -118,7 +144,14 @@ def populate_db() -> None:
 
 
 if __name__ == "__main__":
-    create_query_db()
-    create_analysis_db()
-    populate_db()
+    #runall=input("run all? ")
+    runall='y'
+    if 'y' in runall:
+        create_query_db()
+        create_analysis_db_ALLMODELS()
+        populate_db()
+    else:
+        create_query_db()
+        create_analysis_db()
+        populate_db()
     print("Database created and populated!")
