@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "sqlmodel"
+version = "0.1.0"
+description = ""
+authors = ["ricardocostaarchm <ricardo.costa@makes.ai>, Daniel Ide Futata <daniel.futata@makes.ai>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+langchain = "^0.0.297"
+langchain-experimental = "^0.0.19"
+llama-cpp-python = "^0.2.6"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
