@@ -18,11 +18,11 @@ class SQLQuery:
 
     def _syntax_checker(self, obj):
         # Dummy syntax checker
-        return True
+        return obj
 
     def _classify_query(self, obj):
         # Dummy query classifier
-        return "classification"
+        return obj
 
     def load_db(self):
         self.cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
@@ -105,8 +105,8 @@ class Agente:
 import sys
 
 if __name__=='__main__':
-    agent = Agente()
-    agent.main()
+    #agent = Agente()
+    #agent.main()
     sql_query = SQLQuery('./db/analysis.db')
     sql_query.process_responses()
     sys.stdout = open('output.txt', 'w')
