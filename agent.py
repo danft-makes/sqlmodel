@@ -119,8 +119,8 @@ class Agente:
 import sys
 
 if __name__=='__main__':
-    #agent = Agente()
-    #agent.main()
+    agent = Agente()
+    agent.main()
     sql_query = SQLQuery('./db/analysis.db')
     sql_query.process_responses()
     sys.stdout = open('output.txt', 'w')
