@@ -50,9 +50,10 @@ class SQLQuery:
             self.cursor.execute(f"SELECT {column} FROM analysis")
             responses = self.cursor.fetchall()
             for response in responses:
-                syntax_check = self._syntax_checker(response)
-                classification = self._classify_query(response)
-                self.update_analysis_db(column, response, syntax_check, classification)
+                response_value = response[0]
+                syntax_check = self._syntax_checker(response_value)
+                classification = self._classify_query(response_value)
+                self.update_analysis_db(column, response_value, syntax_check, classification)
 
 class Agente:
     def __init__(self):
