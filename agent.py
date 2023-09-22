@@ -102,6 +102,13 @@ class Agente:
             self.run_queries(chain,MODEL_TAG.replace('-','').replace('.',''))
 
 
+import sys
+
 if __name__=='__main__':
     agent = Agente()
     agent.main()
+    sql_query = SQLQuery('./db/analysis.db')
+    sql_query.process_responses()
+    sys.stdout = open('output.txt', 'w')
+    sql_query.process_responses()
+    sys.stdout.close()
