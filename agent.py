@@ -33,6 +33,10 @@ class SQLQuery:
         columns = [column[1] for column in self.cursor.fetchall() if 'response' in column[1]]
         return columns
 
+    def update_analysis_db(self, column, response, syntax_check, classification):
+        self.cursor.execute(f"UPDATE analysis SET syntax_check_{column} = ?, classification_{column} = ? WHERE {column} = ?", (syntax_check, classification, response))
+        self.conn.commit()
+
     def process_responses(self):
         response_columns = self.get_response_columns()
         for column in response_columns:
@@ -41,7 +45,7 @@ class SQLQuery:
             for response in responses:
                 syntax_check = self._syntax_checker(response)
                 classification = self._classify_query(response)
-                print(f"Syntax Check: {syntax_check}, Classification: {classification}")
+                self.update_analysis_db(column, response, syntax_check, classification)
 
 class Agente:
     def __init__(self):
