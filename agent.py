@@ -34,7 +34,8 @@ class SQLQuery:
         return columns
 
     def update_analysis_db(self, column, response, syntax_check, classification):
-        self.cursor.execute(f"UPDATE analysis SET syntax_check_{column} = ?, classification_{column} = ? WHERE {column} = ?", (syntax_check, classification, response))
+        column_name = column.split('_')[0]
+        self.cursor.execute(f"UPDATE analysis SET syntax_check_{column_name} = ?, classification_{column_name} = ? WHERE {column_name} = ?", (syntax_check, classification, response))
         self.conn.commit()
 
     def process_responses(self):
