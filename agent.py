@@ -11,14 +11,15 @@ from constants import *
 from utils import ModelChooser, DatabaseManager
 from db import ALLMODELS
 
-'''
 class SQLQuery:
     def __init__(self, DATABASE_PATH):
+        return 0
 
     def _syntax_checker(self):
+        return 0
 
     def _classify_query(self):
-'''
+        return 0
 
 class Agente:
     def __init__(self):
