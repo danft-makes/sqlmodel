@@ -11,6 +11,14 @@ from constants import *
 from utils import ModelChooser, DatabaseManager
 from db import ALLMODELS
 
+'''
+class SQLQuery:
+    def __init__(self, DATABASE_PATH):
+
+    def _syntax_checker(self):
+
+    def _classify_query(self):
+'''
 
 class Agente:
     def __init__(self):
