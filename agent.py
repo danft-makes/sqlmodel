@@ -37,6 +37,8 @@ class SQLQuery:
         column_name = column.split('_')[0]
         self.cursor.execute(f"PRAGMA table_info(analysis)")
         columns = [column[1] for column in self.cursor.fetchall()]
+        if column_name not in columns:
+            self.cursor.execute(f"ALTER TABLE analysis ADD COLUMN {column_name} TEXT")
         if f"syntax_check_{column_name}" not in columns:
             self.cursor.execute(f"ALTER TABLE analysis ADD COLUMN syntax_check_{column_name} TEXT")
         if f"classification_{column_name}" not in columns:
