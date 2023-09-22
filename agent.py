@@ -13,13 +13,35 @@ from db import ALLMODELS
 
 class SQLQuery:
     def __init__(self, DATABASE_PATH):
-        return 0
+        self.conn = sqlite3.connect(DATABASE_PATH)
+        self.cursor = self.conn.cursor()
 
-    def _syntax_checker(self):
-        return 0
+    def _syntax_checker(self, obj):
+        # Dummy syntax checker
+        return True
 
-    def _classify_query(self):
-        return 0
+    def _classify_query(self, obj):
+        # Dummy query classifier
+        return "classification"
+
+    def load_db(self):
+        self.cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
+        print("Tables in the database:", self.cursor.fetchall())
+
+    def get_response_columns(self):
+        self.cursor.execute("PRAGMA table_info(analysis)")
+        columns = [column[1] for column in self.cursor.fetchall() if 'response' in column[1]]
+        return columns
+
+    def process_responses(self):
+        response_columns = self.get_response_columns()
+        for column in response_columns:
+            self.cursor.execute(f"SELECT {column} FROM analysis")
+            responses = self.cursor.fetchall()
+            for response in responses:
+                syntax_check = self._syntax_checker(response)
+                classification = self._classify_query(response)
+                print(f"Syntax Check: {syntax_check}, Classification: {classification}")
 
 class Agente:
     def __init__(self):
