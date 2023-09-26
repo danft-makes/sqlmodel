@@ -6,7 +6,7 @@ from langchain.callbacks.manager import CallbackManager
 from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
 from langchain.chains import LLMChain
 from langchain.prompts import PromptTemplate
-from configs.prompts import _CLOSEINSTRUCTION_TEMPLATE, _ALPACA_TEMPLATE
+from configs.prompts import _CLOSEINSTRUCTION_TEMPLATE, _ALPACA_TEMPLATE, _XWIN_TEMPLATE
 from constants import *
 from utils import ModelChooser, DatabaseManager
 from db import ALLMODELS
@@ -71,7 +71,7 @@ class Agente:
                 callback_manager=self.callback_manager,
                 verbose=True,
                 temperature=0,
-                max_tokens=750
+                max_tokens=1500
             )
     
     def initialize_db(self):
@@ -107,6 +107,11 @@ class Agente:
                 prompt = PromptTemplate(
                     input_variables=["input","text1","text2","metavars"], template=_CLOSEINSTRUCTION_TEMPLATE
                 )
+            if 'win' in model:
+                prompt = PromptTemplate(
+                    input_variables=["instruction","input"], template=_XWIN_TEMPLATE
+                )
+
             else:
                 prompt = PromptTemplate(
                     input_variables=["instruction","input"], template=_ALPACA_TEMPLATE
