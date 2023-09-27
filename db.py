@@ -9,7 +9,7 @@ with open(configs_path+"models_list.json","r") as f:
     ALLMODELS = json.load(f)
     
 LOCALMODELS = ALLMODELS
-LOCALMODELS.pop('gpt4')
+#LOCALMODELS.pop('gpt4')
 LOCALMODELSLIST = [model_name.replace('-','').replace('.','') for model_name in LOCALMODELS.keys()]
 
 # Create a new SQLite database

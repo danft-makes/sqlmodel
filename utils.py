@@ -4,21 +4,10 @@ from db import LOCALMODELSLIST,ALLMODELS
 class ModelChooser:
     @staticmethod
     def choose_model():
-        CHOOSE_MODEL = input("model: ")
-        if 'gpt' in CHOOSE_MODEL:
-            print("Using GPT-4 model")
-            return ALLMODELS["gpt4"]
-        if "7" in CHOOSE_MODEL:
-            return ALLMODELS["airoboros-7b-2.2-Q4"] 
-        if "13" in CHOOSE_MODEL:
-            return ALLMODELS["airoboros-13b-2.2-Q4"] 
-        if CHOOSE_MODEL=="standard":
-            return ALLMODELS["airoboros-13b-m2.0-Q5"]
-        else: 
-            LOCALMODELS = []
-            for key in ALLMODELS.keys():
-                LOCALMODELS.append(ALLMODELS[key])
-            return [LOCALMODELS,LOCALMODELSLIST]
+        LOCALMODELS = []
+        for key in ALLMODELS.keys():
+            LOCALMODELS.append(ALLMODELS[key])
+        return [LOCALMODELS,LOCALMODELSLIST]
 
 class DatabaseManager:
     @staticmethod
